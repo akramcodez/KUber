@@ -221,9 +221,37 @@ Authorization: Bearer jwt_token_here
 
 ---
 
-## Usage Summary
+# Captain Management API
 
-- To **register** a new user, send a `POST` request to `/users/register` with the required data in the request body.
-- To **log in**, send a `POST` request to `/users/login` with the required credentials in the request body.
-- To **retrieve a user profile**, send a `GET` request to `/users/profile` with a valid token in the `Authorization` header.
-- To **log out**, send a `GET` request to `/users/logout` with a valid token in the `Authorization` header.
+This API allows captains to register, log in, retrieve their profile, and log out securely.
+
+## Endpoints
+
+The captain endpoints follow a similar structure to the user endpoints but include additional vehicle information during registration.
+
+### 1. Register a New Captain
+
+**Endpoint:** `/captains/register`  
+**Method:** `POST`  
+**Description:** Registers a new captain by validating input data and storing the captain in the database.
+
+#### Request Body
+
+```json
+{
+  "fullname": {
+    "firstName": "John", // Required, minimum length: 3 characters
+    "lastName": "Doe" // Optional, minimum length: 3 characters
+  },
+  "email": "john.doe@example.com", // Required, valid email format
+  "password": "password123", // Required, minimum length: 8 characters
+  "vehicle": {
+    "color": "Red", // Required, minimum length: 3 characters
+    "plateNumber": "ABC123", // Required, minimum length: 3 characters
+    "capacity": 4, // Required, must be a number
+    "vehicleType": "car" // Required, must be one of: car, motorcycle, auto
+  }
+}
+```
+
+Other captain endpoints follow the same pattern as user endpoints but include vehicle details where necessary.
