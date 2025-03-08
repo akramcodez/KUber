@@ -1,43 +1,33 @@
-# User Registration Endpoint Documentation
+# User Authentication API
 
-## Endpoint: `/users/register`
+## Endpoints
 
-### Method: POST
+### 1. Register a New User
 
-### Description
+**Endpoint:** `/users/register`  
+**Method:** `POST`  
+**Description:** Registers a new user by validating input data and storing the user in the database.
 
-This endpoint is used to register a new user. It validates the input data and creates a new user in the database if the data is valid.
-
-### Request Body
+#### Request Body
 
 The request body should be a JSON object containing the following fields:
-
-- `fullname`: An object containing:
-  - `firstname`: A string with a minimum length of 3 characters (required).
-  - `lastname`: A string with a minimum length of 3 characters (optional).
-- `email`: A valid email address (required).
-- `password`: A string with a minimum length of 6 characters (required).
-
-Example:
 
 ```json
 {
   "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
+    "firstname": "John", // Required, minimum length: 3 characters
+    "lastname": "Doe" // Optional, minimum length: 3 characters
   },
-  "email": "john.doe@example.com",
-  "password": "password123"
+  "email": "john.doe@example.com", // Required, valid email format
+  "password": "password123" // Required, minimum length: 6 characters
 }
 ```
 
-### Response
+#### Response
 
-#### Success (201 Created)
+##### Success (201 Created)
 
-If the user is successfully registered, the response will be a JSON object containing the user's token and user details.
-
-Example:
+If registration is successful, the response will contain the user's token and details.
 
 ```json
 {
@@ -53,27 +43,21 @@ Example:
 }
 ```
 
-#### Error (400 Bad Request)
+##### Error (400 Bad Request)
 
-If there are validation errors, the response will be a JSON object containing the errors.
-
-Example:
+If validation fails, an error response is returned.
 
 ```json
 {
   "errors": [
-    {
-      "msg": "Invalid Email",
-      "param": "email",
-      "location": "body"
-    },
+    { "msg": "Invalid Email", "param": "email", "location": "body" },
     {
       "msg": "First Name is required",
       "param": "fullname.firstname",
       "location": "body"
     },
     {
-      "msg": "Password must be atleast 6 characters long",
+      "msg": "Password must be at least 6 characters long",
       "param": "password",
       "location": "body"
     }
@@ -81,14 +65,88 @@ Example:
 }
 ```
 
-Status Codes
-201 Created: User successfully registered.
-400 Bad Request: Validation errors in the request body.
+**Status Codes:**
 
-Usage
-To register a new user, send a POST request to /users/register with the required data in the request body.
+- `201 Created` - User successfully registered.
+- `400 Bad Request` - Validation errors in the request body.
 
-This documentation provides an overview of the /users/register endpoint, including the required data, response format, and status codes.
+---
 
-Save this content in a file named `README.md` in the `Backend` folder.
-Save this content in a file named `README.md` in the `Backend` folder.
+### 2. User Login
+
+**Endpoint:** `/users/login`  
+**Method:** `POST`  
+**Description:** Authenticates an existing user and returns a token if credentials are valid.
+
+#### Request Body
+
+The request body should be a JSON object containing the following fields:
+
+```json
+{
+  "email": "john.doe@example.com", // Required, valid email format
+  "password": "password123" // Required, minimum length: 6 characters
+}
+```
+
+#### Response
+
+##### Success (200 OK)
+
+If login is successful, the response will contain the user's token and details.
+
+```json
+{
+  "token": "jwt_token_here",
+  "user": {
+    "_id": "user_id_here",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+  }
+}
+```
+
+##### Error (400 Bad Request)
+
+If validation fails, an error response is returned.
+
+```json
+{
+  "errors": [
+    { "msg": "Invalid Email", "param": "email", "location": "body" },
+    {
+      "msg": "Password must be at least 6 characters long",
+      "param": "password",
+      "location": "body"
+    }
+  ]
+}
+```
+
+##### Error (401 Unauthorized)
+
+If the email or password is incorrect, an unauthorized response is returned.
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+**Status Codes:**
+
+- `200 OK` - User successfully logged in.
+- `400 Bad Request` - Validation errors in the request body.
+- `401 Unauthorized` - Invalid email or password.
+
+---
+
+## Usage
+
+- To **register** a new user, send a `POST` request to `/users/register` with the required data in the request body.
+- To **log in**, send a `POST` request to `/users/login` with the required credentials in the request body.
+
+This documentation provides an overview of the `/users/register` and `/users/login` endpoints, including required data, response formats, and status codes.
