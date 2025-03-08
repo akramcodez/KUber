@@ -231,7 +231,7 @@ The captain endpoints follow a similar structure to the user endpoints but inclu
 
 ### 1. Register a New Captain
 
-**Endpoint:** `/captains/register`  
+**Endpoint:** `/captain/register`  
 **Method:** `POST`  
 **Description:** Registers a new captain by validating input data and storing the captain in the database.
 
