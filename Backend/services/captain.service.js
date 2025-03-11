@@ -6,7 +6,7 @@ module.exports.createCaptain = async ({
   email,
   password,
   color,
-  plateNumber,
+  platenumber,
   capacity,
   vehicleType,
 }) => {
@@ -15,7 +15,7 @@ module.exports.createCaptain = async ({
     !email ||
     !password ||
     !color ||
-    !plateNumber ||
+    !platenumber ||
     !capacity ||
     !vehicleType
   ) {
@@ -23,14 +23,14 @@ module.exports.createCaptain = async ({
   }
   const captain = await captainModel.create({
     fullname: {
-      firstName: firstname,
-      lastName: lastname,
+      firstname: firstname,
+      lastname: lastname,
     },
     email,
     password,
     vehicle: {
       color,
-      plateNumber,
+      platenumber,
       capacity,
       vehicleType,
     },

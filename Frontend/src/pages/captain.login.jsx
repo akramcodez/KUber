@@ -1,21 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
-import { useState } from 'react';
+import axios from 'axios';
+import { CaptainDataContext } from '../context/captain.context';
 
 const CaptainLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [captainData, setCaptainData] = useState({});
+  const [error, setError] = useState('');
 
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+  const { captain, setCaptain } = useContext(CaptainDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setCaptainData((prevData) => ({
-      ...prevData,
+    const captainData = {
       email,
       password,
-    }));
+    };
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captain/login`,
+        captainData,
+      );
+
+      if (res.status === 200) {
+        const data = res.data;
+        setCaptain(data.captain);
+        localStorage.setItem('token', data.token);
+        navigate('/captain-home');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'Login failed');
+    }
+
     setEmail('');
     setPassword('');
   };
@@ -35,6 +55,8 @@ const CaptainLogin = () => {
           <h2 className="text-xl sm:text-2xl font-semibold text-center mb-6 text-gray-800">
             Login to KUber
           </h2>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <form
             className="flex flex-col gap-4"
@@ -74,7 +96,7 @@ const CaptainLogin = () => {
             <p className="text-center text-gray-600">
               Interested in becoming a Captain?{' '}
               <Link
-                to="/captain/signup"
+                to="/captain-signup"
                 className="text-blue-600 hover:underline"
               >
                 Sign Up
@@ -82,7 +104,7 @@ const CaptainLogin = () => {
             </p>
 
             <Link
-              to="/user/login"
+              to="/user-login"
               className="bg-blue-600 text-white font-semibold rounded px-4 py-2 w-full text-md text-center hover:blue-green-700 transition duration-200 ease-in-out mt-3"
             >
               Login as User

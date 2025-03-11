@@ -7,14 +7,14 @@ const authMiddleware = require('../middlewares/auth.middleware');
 router.post(
   '/register',
   [
-    body('fullname.firstName')
+    body('fullname.firstname')
       .isString()
-      .isLength({ min: 3 })
+      .isLength({ min: 1 })
       .withMessage('First Name must be at least 3 characters long'),
-    body('fullname.lastName')
+    body('fullname.lastname')
       .optional()
       .isString()
-      .isLength({ min: 3 })
+      .isLength({ min: 1 })
       .withMessage('Last Name must be at least 3 characters long'),
     body('email').isEmail().withMessage('Invalid Email'),
     body('password')
@@ -25,7 +25,7 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .withMessage('Vehicle color must be at least 3 characters long'),
-    body('vehicle.plateNumber')
+    body('vehicle.platenumber')
       .isString()
       .isLength({ min: 3 })
       .withMessage('Vehicle plate number must be at least 3 characters long'),

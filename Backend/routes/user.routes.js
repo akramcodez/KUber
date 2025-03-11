@@ -9,7 +9,7 @@ router.post(
   [
     body('email').isEmail().withMessage('Invalid Email'),
     body('fullname.firstname')
-      .isLength({ min: 3 })
+      .isLength({ min: 1 })
       .withMessage('First Name is required'),
     body('password')
       .isLength({ min: 6 })

@@ -1,26 +1,48 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
+import axios from 'axios';
+import { UserDataContext } from '../context/user.context';
 
 const UserSignup = () => {
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userData, setUserData] = useState({});
+  const [error, setError] = useState('');
 
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setUserData((prevData) => ({
-      ...prevData,
+
+    const newUser = {
       fullname: {
-        firstname,
-        lastname,
+        firstname: firstname,
+        lastname: lastname,
       },
-      email,
-      password,
-    }));
+      email: email,
+      password: password,
+    };
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/user/register`,
+        newUser,
+      );
+
+      if (res.status === 201) {
+        const data = res.data;
+        setUser(data.user);
+        localStorage.setItem('token', data.token);
+        navigate('/home');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'Signup failed');
+    }
+
     setFirstname('');
     setLastname('');
     setEmail('');
@@ -43,19 +65,17 @@ const UserSignup = () => {
             Create a KUber Account
           </h2>
 
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={(e) => submitHandler(e)}
-          >
+          {error && <p className="text-red-500 text-center">{error}</p>}
+
+          <form className="flex flex-col gap-4" onSubmit={submitHandler}>
             <div className="flex gap-4">
               <div className="w-1/2">
                 <label className="text-md font-medium">First Name</label>
                 <input
                   className="bg-gray-200 rounded px-4 py-2 border w-full text-md placeholder-gray-500 focus:ring focus:ring-gray-300 outline-none"
                   type="text"
-                  name="firstname"
                   required
-                  minLength={3}
+                  minLength={1}
                   placeholder="First name"
                   value={firstname}
                   onChange={(e) => setFirstname(e.target.value)}
@@ -67,8 +87,7 @@ const UserSignup = () => {
                 <input
                   className="bg-gray-200 rounded px-4 py-2 border w-full text-md placeholder-gray-500 focus:ring focus:ring-gray-300 outline-none"
                   type="text"
-                  name="lastname"
-                  minLength={3}
+                  minLength={1}
                   placeholder="Last name"
                   value={lastname}
                   onChange={(e) => setLastname(e.target.value)}
@@ -81,7 +100,6 @@ const UserSignup = () => {
               <input
                 className="bg-gray-200 rounded px-4 py-2 border w-full text-md placeholder-gray-500 focus:ring focus:ring-gray-300 outline-none"
                 type="email"
-                name="email"
                 required
                 minLength={5}
                 placeholder="email@example.com"
@@ -95,7 +113,6 @@ const UserSignup = () => {
               <input
                 className="bg-gray-200 rounded px-4 py-2 border w-full text-md placeholder-gray-500 focus:ring focus:ring-gray-300 outline-none"
                 type="password"
-                name="password"
                 required
                 placeholder="Create a strong password"
                 value={password}
@@ -112,13 +129,13 @@ const UserSignup = () => {
 
             <p className="text-center text-gray-600">
               Already have an account?{' '}
-              <Link to="/user/login" className="text-blue-600 hover:underline">
+              <Link to="/user-login" className="text-blue-600 hover:underline">
                 Log in
               </Link>
             </p>
 
             <Link
-              to="/captain/signup"
+              to="/captain-signup"
               className="bg-green-600 text-white font-semibold rounded px-4 py-2 w-full text-md text-center hover:bg-green-700 transition duration-200 ease-in-out mt-3"
             >
               Register as a Captain

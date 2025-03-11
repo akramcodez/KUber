@@ -4,14 +4,14 @@ const jwt = require('jsonwebtoken');
 
 const captainSchema = mongoose.Schema({
   fullname: {
-    firstName: {
+    firstname: {
       type: String,
       required: true,
-      minlength: [3, 'First name must be at least 3 characters'],
+      minlength: [1, 'First name must be at least 3 characters'],
     },
-    lastName: {
+    lastname: {
       type: String,
-      minlength: [3, 'Last name must be at least 3 characters'],
+      minlength: [1, 'Last name must be at least 3 characters'],
     },
   },
   email: {
@@ -40,7 +40,7 @@ const captainSchema = mongoose.Schema({
       required: true,
       minlength: [3, 'Color must be at least 3 characters'],
     },
-    plateNumber: {
+    platenumber: {
       type: String,
       required: true,
       minlength: [3, 'Plate number must be at least 3 characters'],

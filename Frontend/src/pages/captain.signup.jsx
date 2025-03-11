@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
+import { CaptainDataContext } from '../context/captain.context';
+import axios from 'axios';
 
 const CaptainSignup = () => {
   const [firstname, setFirstname] = useState('');
@@ -12,24 +14,44 @@ const CaptainSignup = () => {
   const [color, setColor] = useState('');
   const [plateNumber, setPlateNumber] = useState('');
   const [capacity, setCapacity] = useState('');
-  const [captainData, setCaptainData] = useState({});
+  const [error, setError] = useState('');
 
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+  const { setCaptain } = useContext(CaptainDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setCaptainData({
+    const newCaptain = {
       fullname: {
-        firstname,
-        lastname,
+        firstname: firstname,
+        lastname: lastname,
       },
       email,
       password,
       vehicle: {
         vehicleType,
         color,
-        plateNumber,
+        platenumber: plateNumber,
         capacity,
       },
-    });
+    };
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captain/register`,
+        newCaptain,
+      );
+
+      if (res.status === 201) {
+        const data = res.data;
+        setCaptain(data.captain);
+        localStorage.setItem('token', data.token);
+        navigate('/captain-home');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'Signup failed');
+    }
+
     setFirstname('');
     setLastname('');
     setEmail('');
@@ -55,6 +77,7 @@ const CaptainSignup = () => {
           <h2 className="text-xl sm:text-2xl font-semibold text-center mb-6 text-gray-800">
             Become a KUber Captain
           </h2>
+          {error && <p className="text-red-500 text-center">{error}</p>}
           <form className="flex flex-col gap-4" onSubmit={submitHandler}>
             <div className="flex gap-4">
               <div className="w-1/2">
@@ -164,7 +187,7 @@ const CaptainSignup = () => {
             <p className="text-center text-gray-600">
               Already have an account?{' '}
               <Link
-                to="/captain/login"
+                to="/captain-login"
                 className="text-blue-600 hover:underline"
               >
                 Log in
@@ -172,7 +195,7 @@ const CaptainSignup = () => {
             </p>
 
             <Link
-              to="/user/signup"
+              to="/user-signup"
               className="bg-blue-600 text-white font-semibold rounded px-3.5 py-2 w-full text-md text-center hover:blue-green-700 transition duration-200 ease-in-out mt-1"
             >
               Register as a User
